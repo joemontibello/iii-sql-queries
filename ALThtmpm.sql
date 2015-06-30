@@ -1,7 +1,7 @@
 ﻿ --requires privileged account to access iiirecord schema.
 --select * from (
 --Stuck on pulling the 001 with ^o at the same time as marc_tag=300 and field_content Doesn't have p in it...
-SELECT
+SELECT distinct
   varfield.field_content,
   -- case when varfield.marc_tag = '001' then varfield.field_content else NULL end as ocnum,
   'b' || record_metadata.record_num as record_num
@@ -12,7 +12,7 @@ SELECT
 FROM 
   (select * from iiirecord.bib_record where 
   --bib_record.bcode3 ~ '[^cdefgijklnopqrstuvw]' -- bib status not within c-g or i-l or n-w
-  bib_record.bcode3 in ('a','b','h','m','x','y','z')
+  bib_record.bcode3 in ('-','h','m','u','x')
   AND bib_record.bcode1 = 'a' -- bib mat type = a
   ) as bib_record
   --iiirecord.bib_record
@@ -34,7 +34,7 @@ WHERE
 --   AND bib_record.bcode1 = 'a' -- bib mat type = a
 --   AND bib_record.bcode2 ~ '[^cdefg]' -- bib source not within c and g.
 -- AND bib_record.bcode2 not in ('c','d','e','f','g')
-  AND (varfield.marc_tag = '001' AND varfield.field_content ~ '^o')
+  AND (varfield.marc_tag = '001' AND (varfield.field_content ~ '^o' OR varfield.field_content ~ '^[\d]+$'))
   AND EXISTS (	Select 1 
 		from iiirecord.varfield 
 		where
