@@ -1,25 +1,42 @@
-﻿--usually runs in about 1 minute first run, 20 seconds subsequently
---estimate above based on cost of 758k
---estimate above is on the higher end. Early runs were limited to 50 rows.
---later iterations, eventually unlimited, running in about 20 seconds.
-SELECT distinct 
-  circ_loan_rule_determiner.display_order,
-  circ_loan_rule_determiner_location.location_id,
-  circ_loan_rule_determiner_ptype_property.ptype_property_id,
-  circ_loan_rule.loan_rule_num
-
+﻿SELECT distinct
+  circ_loan_rule.loan_rule_num,
+  circ_loan_rule_name.name as loan_rule_name,
+  circ_loan_rule_determiner.display_order as determiner_order
 FROM 
   public.circ_loan_rule, 
   public.circ_loan_rule_determiner, 
-  public.circ_loan_rule_determiner_itype_property, 
+  public.circ_loan_rule_determiner_itype_property,
   public.circ_loan_rule_determiner_location, 
   public.circ_loan_rule_determiner_ptype_property, 
-  public.circ_loan_rule_name
+  public.circ_loan_rule_name,
+  public.location,
+  public.location_name,
+  public.itype_property_name,
+  public.itype_property,
+  public.ptype,
+  public.ptype_desc,
+  public.branch,
+  public.branch_name
 WHERE 
-  circ_loan_rule_determiner.loan_rule_id = circ_loan_rule.id AND
-  circ_loan_rule_determiner_itype_property.circ_loan_rule_determiner_id = circ_loan_rule_determiner.id AND
-  circ_loan_rule_determiner_location.circ_loan_rule_determiner_id = circ_loan_rule_determiner.id AND
-  circ_loan_rule_determiner_ptype_property.circ_loan_rule_determiner_id = circ_loan_rule_determiner.id AND
-  circ_loan_rule_name.loan_rule_id = circ_loan_rule.id
-order by loan_rule_num
---Limit 50000;
+  branch_name.branch_id = branch.id 
+  AND location.branch_code_num = branch.code_num 
+  AND circ_loan_rule_determiner_location.location_id = location.id
+  AND circ_loan_rule_determiner_location.circ_loan_rule_determiner_id = circ_loan_rule_determiner.id 
+  AND ptype_desc.ptype_id = ptype.id 
+  AND itype_property_name.itype_property_id = itype_property.id 
+  AND circ_loan_rule_determiner.loan_rule_id = circ_loan_rule.id 
+  AND itype_property.id = circ_loan_rule_determiner_itype_property.itype_property_id 
+  AND circ_loan_rule_determiner_itype_property.circ_loan_rule_determiner_id = circ_loan_rule_determiner.id 
+  AND ptype.id = circ_loan_rule_determiner_ptype_property.ptype_property_id
+  AND circ_loan_rule_determiner_ptype_property.circ_loan_rule_determiner_id = circ_loan_rule_determiner.id 
+  AND circ_loan_rule_name.loan_rule_id = circ_loan_rule.id
+  AND circ_loan_rule_determiner_location.location_id = location.id
+  AND circ_loan_rule_determiner_itype_property.itype_property_id = itype_property.id
+--text of circ notices -- which loan rules do texts connect to?
+  AND ptype.value = '1'
+  AND itype_property.code_num = '0'
+  and location.code ='bmaj'
+  
+  order by determiner_order desc nulls last
+  limit 1
+  
