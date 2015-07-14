@@ -32,11 +32,11 @@ WHERE
   AND circ_loan_rule_name.loan_rule_id = circ_loan_rule.id
   AND circ_loan_rule_determiner_location.location_id = location.id
   AND circ_loan_rule_determiner_itype_property.itype_property_id = itype_property.id
---text of circ notices -- which loan rules do texts connect to?
+
   AND ptype.value = '1'
   AND itype_property.code_num = '0'
-  and location.code ='bmaj'
+  AND location.code ='bmaj'
   
-  order by determiner_order desc nulls last
-  limit 1
+  ORDER BY determiner_order DESC NULLS LAST
+  LIMIT 1;
   
