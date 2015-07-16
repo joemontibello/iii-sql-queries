@@ -1,7 +1,12 @@
-﻿SELECT distinct
+﻿SELECT DISTINCT
   circ_loan_rule.loan_rule_num,
-  circ_loan_rule_name.name as loan_rule_name,
-  circ_loan_rule_determiner.display_order as determiner_order
+  circ_loan_rule.loan_period,
+  CASE WHEN circ_loan_rule.period_uom = 3600 THEN 'hours'
+	WHEN circ_loan_rule.period_uom = 86400 THEN 'days'
+  END AS loan_period_unit,
+  circ_loan_rule.is_holdable,
+  circ_loan_rule_name.name AS loan_rule_name,
+  circ_loan_rule_determiner.display_order AS determiner_order
 FROM 
   public.circ_loan_rule, 
   public.circ_loan_rule_determiner, 
@@ -33,9 +38,9 @@ WHERE
   AND circ_loan_rule_determiner_location.location_id = location.id
   AND circ_loan_rule_determiner_itype_property.itype_property_id = itype_property.id
 
-  AND ptype.value = '1'
+  AND ptype.value = '0'
   AND itype_property.code_num = '0'
-  AND location.code ='bmaj'
+  AND location.code ='bakr'
   
   ORDER BY determiner_order DESC NULLS LAST
   LIMIT 1;
