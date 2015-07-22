@@ -16,4 +16,4 @@ where
 item_record.checkout_total < (item_record.year_to_date_checkout_total + item_record.last_year_to_date_checkout_total)
 and bib_record_property.bib_record_id = bib_record_item_record_link.bib_record_id
 and (record_metadata.record_type_code = 'i'and record_metadata.id = item_record.id)
---and item_record.save_checkout_total is not distinct from null
+and item_record.save_checkout_total is not distinct from null
