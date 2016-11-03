@@ -24,4 +24,3 @@ AND varfield_view.record_type_code = 'b'
 AND varfield_view.record_id = bib_view.id
 AND varfield_view.varfield_type_code = 'c'
 --AND pcode3 = '89'
-limit 100;

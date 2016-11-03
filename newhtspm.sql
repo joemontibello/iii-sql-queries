@@ -3,6 +3,7 @@
 SELECT
   varfield.field_content,
   id2reckey(bib_record.id)
+-- 'b' || record_metadata.record_num as record_num
 --  bib_record_property.bib_level_code,
 --  bib_record_view.bcode1 as mat_type,
 --  bib_record_view.bcode2 as source,
@@ -10,7 +11,6 @@ SELECT
 --  bib_record_view.cataloging_date
 FROM 
   iiirecord.bib_record
-  --inner join iiirecord.record_metadata on bib_record.id = record_metadata.id
   inner join iiirecord.varfield on bib_record.id = varfield.record_id 
   inner join iiirecord.leader_field on leader_field.record_id = bib_record.id
 WHERE 
@@ -19,7 +19,9 @@ WHERE
   AND bib_record.bcode1 ~ '[at]' -- bib mat type = (a or t)
   AND bib_record.bcode2 ~ '[^cg]' -- bib source not c or g.
   AND varfield.marc_tag = '001'
-  AND (varfield.field_content NOT ILIKE 'b%' AND varfield.field_content NOT ILIKE 'r%' AND varfield.field_content NOT ILIKE 's%' AND varfield.field_content NOT ILIKE 'e%' AND varfield.field_content NOT LIKE '%-%')
+  AND (varfield.field_content !~* '^[bres]%'
+  AND SUBSTRING(varfield.field_content FROM '%#-#%' FOR '#') IS NOT DISTINCT FROM NULL)
+  --AND (varfield.field_content NOT ILIKE 'b%' AND varfield.field_content NOT ILIKE 'r%' AND varfield.field_content NOT ILIKE 's%' AND varfield.field_content NOT ILIKE 'e%' AND varfield.field_content NOT LIKE '%-%')
   AND bib_record.cataloging_date is not null -- add cat date not blank
   --Need to exclude (case insensitive) 245 |h[micro
 ORDER BY varfield.field_content;
